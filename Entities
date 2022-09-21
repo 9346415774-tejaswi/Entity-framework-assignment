@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+  </configSections>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2" />
+  </startup>
+  <entityFramework>
+    <providers>
+      <provider invariantName="System.Data.SqlC
+      client" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+    </providers>
+  </entityFramework>
+	<connectionStrings>
+		<add name="BookDBConn" connectionString="Data Source=DESKTOP-TUF8GF9\SQLEXPRESS;Initial Catalog=BookDb0913;Integrated Security=True;Pooling=False" providerName="System.Data.SqlClient"/>
+	</connectionStrings>
+</configuration>
+
+/*book.cs*/
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EntityFrameWork_Code_first_Assingnment_2.Entities
+{
+    [Table("Book")]
+    internal class Book
+    {
+        [Key] //Identity applied with 1,1
+        [ForeignKey("Order")]
+        public int BookId { get; set; }
+        [Required] //set not null
+        [StringLength(30)]
+        [Column(TypeName = "varchar")]
+        public string BookName { get; set; }
+        public double? Price { get; set; } //null constraint applied
+        [StringLength(35)]
+        [Column(TypeName = "char")]
+        public string Author { get; set; }
+
+
+        public Order Order { get; set; } //Navigation property
+    }
+}
+
+/*my context db*/
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EntityFrameWork_Code_first_Assingnment_2.Entities
+{
+    internal class MyContextDB : DbContext
+    {
+        public MyContextDB() : base("name=BookDBConn")
+        {
+
+        }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Book> Books { get; set; }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<Employee>(entity=>entity.HasCheckConstraint("Salary","Salary>0"));
+        }
+    }
+}
+/*order.cs*/
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EntityFrameWork_Code_first_Assingnment_2.Entities
+{
+    [Table("Order")]
+    internal class Order
+    {
+        [Key] //set primary key
+
+        public int OrderId { get; set; }
+
+        public DateTime OrderDate { get; set; }
+        public int BookId { get; set; }
+    }
+}
